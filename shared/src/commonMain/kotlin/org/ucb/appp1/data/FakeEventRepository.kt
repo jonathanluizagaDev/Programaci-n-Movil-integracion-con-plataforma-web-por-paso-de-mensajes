@@ -9,6 +9,9 @@ class FakeEventRepository : EventRepository {
     private var nextEventNumber = 1
 
     override fun simulateRoundTrip(origin: EventOrigin): List<EventLogEntry> {
+        require(origin == EventOrigin.APP || origin == EventOrigin.WEB) {
+            "El origen debe ser la app o la plataforma web"
+        }
         val number = nextEventNumber++
         val requestId = "req-${number.toString().padStart(3, '0')}"
         val eventId = "evt-${number.toString().padStart(3, '0')}"
