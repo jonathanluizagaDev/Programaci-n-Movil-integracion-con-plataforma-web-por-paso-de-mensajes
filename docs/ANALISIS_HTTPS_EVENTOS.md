@@ -136,13 +136,13 @@ Rutas basadas en el proyecto móvil importado; verificar backend y web en el res
 | Archivo actual/nuevo | Trabajo previsto |
 |---|---|
 | `shared/src/commonMain/kotlin/org/ucb/appp1/App.kt` | Mantener como raíz compartida y conectar la nueva pantalla de acciones/eventos. |
-| Actual `presentation/ChatScreen.kt` | Reemplazar o adaptar el chat por una pantalla para iniciar acciones y ver solicitudes, respuestas, eventos y logs. |
-| Actual `presentation/ChatStateHolder.kt` | Adaptar a estado de operación: conectando, enviando, aceptado/rechazado, procesado/fallido, stream y errores. |
-| Actual `model/ChatMessage.kt` | Sustituir por modelos como `EventCommand`, `EventResponse`, `IncomingEvent` y `EventLogEntry`. |
-| Actual `domain/MessageRepository.kt` | Reemplazar/adaptar por una interfaz como `EventRepository` con operaciones de envío, escucha y confirmación. |
-| Actual `data/FakeMessageRepository.kt` | Mantener solo como demo local o sustituir por `HttpsEventRepository`; no debe fingir una conexión real. |
-| Nuevo `data/remote/EventsApi.kt` | Enviar acciones por HTTPS y leer la respuesta inmediata del backend. |
-| Nuevo `data/remote/EventStreamClient.kt` | Suscribirse a SSE o implementar polling si eso define el backend. |
+| `presentation/EventConsoleScreen.kt` | Consola actual: iniciar desde app o simular origen web y mostrar cada paso del flujo. |
+| `presentation/EventStateHolder.kt` | Estado observable y acciones de la consola actual; adaptar para estados reales al conectar red. |
+| `model/EventLogEntry.kt` | Modelo actual para registros simulados; ampliar con DTOs según el contrato real. |
+| `domain/EventRepository.kt` | Interfaz actual que separa la UI del origen del flujo de eventos. |
+| `data/FakeEventRepository.kt` | Simula solicitud, respuesta, entrega y confirmación; sustituir por implementación remota. |
+| Próximo `data/remote/EventsApi.kt` | Enviar acciones por HTTPS y leer la respuesta inmediata del backend. |
+| Próximo `data/remote/EventStreamClient.kt` | Suscribirse a SSE o implementar polling si eso define el backend. |
 | `shared/build.gradle.kts` y `gradle/libs.versions.toml` | Añadir cliente HTTP/JSON y, si se necesita, librería de streaming compatible con Android e iOS. |
 | `androidApp/src/main/AndroidManifest.xml` | Añadir `INTERNET` al conectar la app a la red. En iOS, HTTPS debería evitar excepciones de transporte inseguro. |
 
@@ -184,7 +184,7 @@ La web puede iniciar la acción, recibir el response, escuchar eventos, procesar
 
 Implementar cliente HTTPS en `shared`, recepción de eventos según transporte seleccionado, confirmación, estado de UI y manejo de errores/reintentos.
 
-**Criterio de salida:** la app inicia y recibe eventos sin depender de `FakeMessageRepository`.
+**Criterio de salida:** la app inicia y recibe eventos sin depender de `FakeEventRepository`.
 
 ### Fase 5: prueba de ida y vuelta
 
@@ -208,9 +208,10 @@ Son rangos de planificación, no una fecha comprometida. Cambian si se añaden d
 
 ## 10. Qué está hecho y qué no
 
-- **Hecho:** prototipo Compose de chat con mensajes simulados; se ejecutó en emulador y se observó el envío local. El proyecto y los documentos están en la rama `feature/https-eventos-prototipo`.
+- **Prototipo anterior:** pantalla Compose de chat local, retirada al reemplazarla por la consola de eventos.
+- **Hecho ahora:** consola Compose que simula eventos originados desde app o web y registra request/response/entrega/ack en memoria. El proyecto está en `feature/https-eventos-prototipo`.
 - **No hecho:** llamadas HTTPS, eventos remotos, SSE/polling, backend, autenticación, logs de servidor y comunicación real con la web.
-- **Importante:** el chat actual no cuenta como integración end-to-end ni implementa la función de eventos; puede reutilizarse como base visual/estado, pero probablemente se adapte a la demo elegida.
+- **Importante:** la consola de eventos actual tampoco es integración end-to-end; no hace solicitudes HTTPS ni recibe eventos remotos. Sirve para presentar el recorrido esperado mientras se obtiene el contrato real.
 - **Historial:** el proyecto original se importó desde una descarga ZIP sin historial Git; el repositorio oficial recibió esta copia como base de trabajo.
 
 ## 11. Información necesaria para empezar la integración real

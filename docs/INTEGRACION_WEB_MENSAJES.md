@@ -9,7 +9,7 @@ El repositorio oficial es [Programaci-n-Movil-integracion-con-plataforma-web-por
 
 El remoto estaba vacío al conectarse. Para poblarlo se importó el proyecto Kotlin Multiplatform y los documentos desde la copia `ucbp1_project`, descargada previamente como ZIP. La importación no conserva historial Git del ZIP original.
 
-El proyecto incluye una demostración local de interfaz y envío con un repositorio simulado. El detalle de archivos, líneas y comportamiento está en [AVANCE_PROTO_MENSAJERIA_50.md](./AVANCE_PROTO_MENSAJERIA_50.md). Esto representa el hito aproximado del prototipo móvil, no la integración real con la plataforma.
+La app ahora tiene una consola local de eventos simulados que muestra ambos sentidos del flujo y sus logs. El detalle de archivos, líneas y comportamiento está en [AVANCE_PROTO_MENSAJERIA_50.md](./AVANCE_PROTO_MENSAJERIA_50.md). Todavía no es una integración real con la plataforma.
 
 El análisis actualizado del flujo HTTPS/eventos, archivos, fases y criterios de demostración está en [ANALISIS_HTTPS_EVENTOS.md](./ANALISIS_HTTPS_EVENTOS.md).
 
@@ -22,12 +22,12 @@ Integrar una app Kotlin con una plataforma web mediante HTTPS y eventos que circ
 - El proyecto usa Kotlin Multiplatform y Compose Multiplatform.
 - Los destinos configurados son Android e iOS.
 - `shared` contiene el código Kotlin compartido.
-- La app tiene un prototipo de conversación con estado y datos simulados, pero no tiene cliente de red ni contrato de eventos.
+- La app tiene una consola de eventos con datos simulados, pero no tiene cliente de red ni contrato acordado con el backend.
 - No se ha confirmado que exista un backend o API para la plataforma web.
 
 ## Diferencia entre el prototipo actual y el objetivo final
 
-La pantalla de chat implementada sirvió para demostrar estado e interacción local. El objetivo explicado por el docente es distinto: demostrar un recorrido de evento, por ejemplo iniciar una actividad, enviar datos de movimiento o cambiar una preferencia. La app envía una orden, el servidor responde y registra el evento, la plataforma web lo procesa y la app muestra la respuesta/resultado con sus logs. Estos ejemplos ilustran el flujo; todavía no se ha elegido cuál será la acción concreta. Por eso, el prototipo de chat debería adaptarse a una pantalla de acciones y a un registro de solicitud, respuesta y eventos.
+La consola de eventos implementada demuestra localmente un recorrido en ambos sentidos. La función final debe demostrar un evento real: un cliente inicia una acción, el servidor responde y la registra, el otro cliente procesa el evento y confirma; los logs muestran los identificadores relacionados. Los ejemplos del docente (iniciar una actividad, medir movimiento o cambiar una preferencia) ilustran el flujo; todavía no se ha elegido la acción concreta.
 
 Si el ejemplo elegido es una preferencia visual, el cambio aplicaría a las páginas/sesiones de nuestra plataforma web conectadas y autorizadas. Una app o página web no puede cambiar la interfaz del navegador completo ni modificar sitios web ajenos. Si se elige medir movimiento o realidad virtual, esos datos requerirían además el sensor o dispositivo correspondiente; esa función todavía no está definida.
 
@@ -96,7 +96,7 @@ El receptor confirma el procesamiento mediante otra solicitud HTTPS con el `even
 2. Elegir la acción/evento de demostración y acordar endpoint HTTPS, autenticación, datos de la orden, respuesta y formato/nombre del evento.
 3. Confirmar cómo reciben eventos los navegadores (SSE, polling u otra opción HTTP).
 4. Implementar en el backend autorización, registro, almacenamiento y publicación de la orden.
-5. Implementar en la app el cliente HTTPS y reemplazar `FakeMessageRepository`.
+5. Implementar en la app el cliente HTTPS y reemplazar `FakeEventRepository`.
 6. Implementar en la web la suscripción al evento, aplicar el tema y enviar confirmación.
 7. Probar la cadena completa y revisar los logs de orden, evento, entrega y confirmación.
 
@@ -104,16 +104,16 @@ El receptor confirma el procesamiento mediante otra solicitud HTTPS con el `even
 
 La estimación es preliminar y representa esfuerzo de desarrollo, no tiempo calendario. Cambiará cuando conozcamos la plataforma, el backend y el protocolo.
 
-### Hito de 50 % para un prototipo en este repositorio
+### Hito aproximado para el prototipo en este repositorio
 
 Consideraremos que el prototipo llega aproximadamente al 50 % cuando:
 
-- exista una capa de mensajería en `shared`, separada de la interfaz;
-- estén definidos los modelos de mensaje y el contrato provisional;
-- la app pueda mostrar una conversación de demostración y enviar/recibir mensajes contra un adaptador simulado;
+- exista una capa de eventos en `shared`, separada de la interfaz;
+- existan modelos de logs correlacionados y un flujo ilustrativo;
+- la app muestre eventos iniciados desde ambos orígenes simulados;
 - estén documentados los puntos que habrá que sustituir o configurar para conectar el backend real.
 
-Este hito valida estructura y flujo de interfaz, pero no cuenta como integración funcional con la plataforma web. El adaptador simulado no entrega mensajes a la web ni valida el protocolo real.
+Este hito valida estructura y flujo de interfaz, pero no cuenta como integración funcional con la plataforma web. El adaptador simulado no entrega eventos a la web ni valida el protocolo real. El alcance y sus límites están detallados en [AVANCE_PROTO_MENSAJERIA_50.md](./AVANCE_PROTO_MENSAJERIA_50.md); el porcentaje formal depende de la rúbrica del docente.
 
 ### Esfuerzo aproximado
 
@@ -154,7 +154,7 @@ Este mapa se basa en el proyecto móvil importado al repositorio oficial. Las ru
 
 | Archivo | Trabajo probable |
 |---|---|
-| `shared/src/commonMain/kotlin/org/ucb/appp1/App.kt` | Reemplazar la pantalla de ejemplo por la interfaz de mensajería: lista, campo de texto, botón de envío y estados de carga/error/conexión. |
+| `shared/src/commonMain/kotlin/org/ucb/appp1/App.kt` | Conectar la raíz compartida a la consola de eventos. |
 | `shared/build.gradle.kts` | Agregar dependencias de cliente HTTPS y serialización; para SSE, elegir una implementación compatible con Android e iOS. |
 | `gradle/libs.versions.toml` | Centralizar versiones y alias de las librerías añadidas. |
 | `androidApp/src/main/AndroidManifest.xml` | Añadir permiso `INTERNET` para llamadas de red. En producción se usará HTTPS. |
@@ -173,17 +173,17 @@ Este mapa se basa en el proyecto móvil importado al repositorio oficial. Las ru
 
 Las responsabilidades se pueden separar en paquetes bajo `shared/src/commonMain/kotlin/org/ucb/appp1/`:
 
-- `model/ChatMessage.kt`: modelo de mensaje que usa la interfaz.
+- `model/EventLogEntry.kt`: origen, etapa y datos correlacionados de cada log.
 - `model/MessageEnvelope.kt`: formato JSON de entrada/salida acordado con el servidor.
 - `data/remote/PreferencesApi.kt`: envío HTTPS de órdenes y lectura de respuestas.
 - `data/remote/EventStreamClient.kt`: suscripción a eventos si el backend confirma SSE u otro stream HTTP.
-- `data/repository/MessageRepositoryImpl.kt`: implementación que adapta el protocolo al dominio compartido.
-- `domain/MessageRepository.kt`: interfaz que desacopla la UI del transporte y permite un adaptador simulado.
-- `presentation/ChatViewModel.kt`: estado y acciones de la pantalla, si se mantiene la arquitectura con ViewModel multiplataforma.
-- `presentation/ChatScreen.kt`: pantalla Compose separada del `App.kt` de arranque.
+- `data/repository/HttpsEventRepository.kt`: implementación que adapta el protocolo al dominio compartido.
+- `domain/EventRepository.kt`: interfaz que desacopla la UI del transporte; actualmente se usa un adaptador simulado.
+- `presentation/EventStateHolder.kt`: estado y acciones de la consola.
+- `presentation/EventConsoleScreen.kt`: pantalla Compose con controles y registro de eventos.
 - `commonMain`/`androidMain`/`iosMain` de configuración de `HttpClient`, si los motores seleccionados exigen configuración por plataforma.
 
-La implementación final depende del contrato del backend y de cómo se entreguen los eventos a los navegadores.
+Para la integración real habrá que añadir `data/remote/EventsApi.kt`, un receptor SSE o polling y modelos del contrato que defina el backend. La implementación depende de ese contrato.
 
 ### Posible trabajo fuera de este repositorio
 
