@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Eventos HTTPS</title>
+<style>
+:root { color-scheme: light dark; font-family: system-ui,sans-serif; } body { margin: 0; background: #f4f5fb; color: #182136; } body.dark { background: #161b2a; color: #edf1ff; } main { max-width: 760px; margin: auto; padding: 2rem 1rem; } .panel { background: #fff; padding: 1.3rem; border-radius: 16px; margin: 1rem 0; } .dark .panel { background: #262e42; } button { border: 0; border-radius: 9px; padding: .8rem 1rem; margin: .3rem; background: #445ec4; color: white; cursor: pointer; } li { margin: .7rem 0; overflow-wrap: anywhere; } small { opacity: .8; }
+</style></head><body><main><h1>Eventos de tema por HTTPS</h1><p>La web y la aplicación comparten el modo visual mediante el servidor.</p><section class="panel"><strong id="status">Conectando…</strong><p id="theme">Modo actual: claro</p><button onclick="sendTheme('light')">Modo claro</button><button onclick="sendTheme('dark')">Modo oscuro</button></section><section class="panel"><h2>Registro de actividad</h2><ol id="events"></ol></section></main>
+<script>
+const status = document.getElementById('status'), list = document.getElementById('events');
+let polling = false;
+async function api(path, options) { const res = await fetch(path, options); const data = await res.json(); if (!res.ok) throw Error(data.error || res.status); return data; }
+async function post(path, data) { return api(path, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)}); }
+async function sendTheme(theme) { try { await post('/api/events', {origin:'web',theme}); await refresh(); } catch(e) { status.textContent = 'Error al enviar: ' + e.message; } }
+async function refresh() {
+ if (polling) return; polling = true;
+ try {
+  const data = await api('/api/state'); document.body.classList.toggle('dark',data.theme === 'dark');
+  document.getElementById('theme').textContent = 'Modo actual: ' + (data.theme === 'dark' ? 'oscuro' : 'claro');
+  for (const e of data.events) if(e.origin === 'android' && e.status === 'accepted') await post('/api/ack',{eventId:e.eventId,client:'web'});
+  list.replaceChildren(...data.events.slice().reverse().map(e => { const li=document.createElement('li'); li.textContent=`${e.origin} → ${e.theme} | ${e.status} | requestId: ${e.requestId} | eventId: ${e.eventId}`; return li; }));
+  status.textContent = 'Conectado por HTTPS';
+ } catch(e) { status.textContent = 'Sin conexión: ' + e.message; } finally { polling = false; }
+}
+refresh(); setInterval(refresh, 2000);
+</script></body></html>

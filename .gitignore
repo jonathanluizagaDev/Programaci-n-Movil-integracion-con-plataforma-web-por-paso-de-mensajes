@@ -17,3 +17,8 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+demo-web/certs/
+androidApp/src/debug/res/raw/demo_ca.pem
+
+__pycache__/

@@ -1,5 +1,7 @@
 # Verificación del prototipo de eventos
 
+> Documento anterior al servidor de demostración. El estado actual y sus instrucciones están en [DEMO_HTTPS_TEMA.md](./DEMO_HTTPS_TEMA.md).
+
 Se compiló la app Android y se ejecutaron las pruebas de la lógica compartida en el host Android:
 
 ```sh

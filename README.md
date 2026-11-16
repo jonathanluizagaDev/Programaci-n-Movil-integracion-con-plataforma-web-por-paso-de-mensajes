@@ -1,3 +1,7 @@
+# Demostración de eventos HTTPS
+
+La app Android y la página web pueden sincronizar el modo claro/oscuro por HTTPS mediante un servidor local. Consulta [la guía de ejecución y explicación](docs/DEMO_HTTPS_TEMA.md).
+
 This is a Kotlin Multiplatform project targeting Android, iOS.
 
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,

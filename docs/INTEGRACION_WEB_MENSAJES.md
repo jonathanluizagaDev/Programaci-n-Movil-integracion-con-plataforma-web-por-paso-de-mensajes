@@ -1,5 +1,7 @@
 # Integración de la app móvil con una plataforma web mediante mensajes
 
+> Documento anterior al servidor de demostración. El estado actual y sus instrucciones están en [DEMO_HTTPS_TEMA.md](./DEMO_HTTPS_TEMA.md).
+
 **Estado:** investigación y prototipo cliente local; HTTPS con respuestas y eventos, sin WebSocket  
 **Última actualización:** 2026-11-15
 

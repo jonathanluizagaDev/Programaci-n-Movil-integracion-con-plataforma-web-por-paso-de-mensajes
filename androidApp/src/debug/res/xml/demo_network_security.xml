@@ -1,0 +1,3 @@
+<network-security-config>
+    <debug-overrides><trust-anchors><certificates src="@raw/demo_ca" /></trust-anchors></debug-overrides>
+</network-security-config>

@@ -1,5 +1,7 @@
 # Guía para explicar y demostrar el avance
 
+> Documento anterior al servidor de demostración. El estado actual y sus instrucciones están en [DEMO_HTTPS_TEMA.md](./DEMO_HTTPS_TEMA.md).
+
 ## Explicación breve
 
 > “Reemplacé el chat de mensajes de ejemplo por una consola que representa el flujo de eventos que definimos: la app o la web inicia una acción, el servidor responde, el evento llega al otro cliente y ese cliente confirma el procesamiento. Cada paso muestra el mismo `requestId` y `eventId` para poder seguirlo en los logs. Por ahora el flujo es simulado localmente; todavía no existe conexión HTTPS con un backend ni con la plataforma web. La siguiente etapa es acordar el contrato y sustituir el repositorio falso por una implementación de red.”

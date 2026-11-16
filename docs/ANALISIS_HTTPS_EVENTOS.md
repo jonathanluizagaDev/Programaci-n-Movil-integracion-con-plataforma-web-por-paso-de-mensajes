@@ -1,5 +1,7 @@
 # Análisis de implementación: HTTPS, respuestas y eventos
 
+> Documento anterior al servidor de demostración. El estado actual y sus instrucciones están en [DEMO_HTTPS_TEMA.md](./DEMO_HTTPS_TEMA.md).
+
 **Fecha:** 2026-11-15  
 **Estado:** diseño preliminar; requiere conocer el backend y la plataforma web oficiales  
 **Repositorio inspeccionado:** repositorio oficial, clonado localmente en la rama `feature/https-eventos-prototipo`; su contenido inicial estaba vacío y se importó el proyecto móvil desde la descarga ZIP previa.

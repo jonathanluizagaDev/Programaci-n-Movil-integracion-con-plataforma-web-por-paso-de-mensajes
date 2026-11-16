@@ -1,5 +1,7 @@
 # Avance del prototipo móvil: consola de eventos
 
+> Documento anterior al servidor de demostración. El estado actual y sus instrucciones están en [DEMO_HTTPS_TEMA.md](./DEMO_HTTPS_TEMA.md).
+
 **Fecha:** 2026-11-15
 
 **Rama:** `feature/https-eventos-prototipo`
